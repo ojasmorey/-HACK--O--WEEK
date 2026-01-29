@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Saffron Conservatory - Menu</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet">
+
+    <style>
+        /* --- RESET & VARIABLES --- */
+        :root {
+            --primary-bg: #FFFFFF;
+            --accent-color: #D35400; /* Burnt Orange for luxury feel */
+            --text-dark: #2C3E50;
+            --text-light: #7F8C8D;
+            --border-light: #ecf0f1;
+            
+            --font-heading: 'Cormorant Garamond', serif;
+            --font-body: 'Montserrat', sans-serif;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--primary-bg);
+            color: var(--text-dark);
+            font-family: var(--font-body);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        a { text-decoration: none; color: inherit; }
+        ul { list-style: none; }
+
+        /* --- LAYOUT CONTAINER --- */
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        /* --- HEADER SECTION --- */
+        header {
+            border-bottom: 2px solid var(--accent-color);
+            padding-bottom: 30px;
+            margin-bottom: 50px;
+        }
+
+        .header-grid {
+            display: grid;
+            grid-template-columns: 1fr 1.5fr 1fr;
+            gap: 20px;
+            text-align: center;
+            align-items: start;
+        }
+
+        /* Left Column */
+        .brand-info {
+            text-align: left;
+        }
+        .restaurant-name {
+            font-family: var(--font-heading);
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            line-height: 1.1;
+            margin-bottom: 10px;
+            letter-spacing: -0.5px;
+        }
+        .address-details {
+            font-size: 0.85rem;
+            color: var(--text-light);
+            font-weight: 400;
+        }
+
+        /* Center Column */
+        .center-info {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .hours-display {
+            font-family: var(--font-heading);
+            font-size: 1.4rem;
+            color: var(--accent-color);
+            font-weight: 600;
+            margin-bottom: 15px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+            width: 100%;
+        }
+        .nav-links {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+        }
+        .nav-links a {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+            transition: color 0.3s;
+        }
+        .nav-links a:hover {
+            color: var(--accent-color);
+        }
+
+        /* Right Column */
+        .timing-info {
+            text-align: right;
+            font-size: 0.9rem;
+        }
+        .timing-block {
+            margin-bottom: 8px;
+        }
+        .timing-label {
+            display: block;
+            font-weight: 600;
+            color: var(--accent-color);
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 1px;
+        }
+
+        /* --- MENU SECTIONS --- */
+        .menu-category {
+            margin-bottom: 60px;
+        }
+
+        .category-header {
+            text-align: center;
+            margin-bottom: 30px;
+            position: relative;
+        }
+
+        .category-title {
+            font-family: var(--font-heading);
+            font-size: 2.2rem;
+            color: var(--accent-color);
+            display: inline-block;
+            border-bottom: 1px solid var(--accent-color);
+            padding-bottom: 5px;
+        }
+
+        .menu-items-grid {
+            display: grid;
+            gap: 25px;
+        }
+
+        .menu-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            border-bottom: 1px solid var(--border-light);
+            padding-bottom: 15px;
+        }
+
+        .item-details {
+            flex: 1;
+            padding-right: 20px;
+        }
+
+        .item-name {
+            font-family: var(--font-heading);
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 5px;
+        }
+
+        .item-desc {
+            font-size: 0.85rem;
+            color: var(--text-light);
+            font-style: italic;
+        }
+
+        .item-price {
+            font-family: var(--font-heading);
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            white-space: nowrap;
+        }
+
+        /* --- RESPONSIVE / MOBILE OPTIMIZATION --- */
+        @media (max-width: 768px) {
+            .header-grid {
+                grid-template-columns: 1fr;
+                text-align: center;
+                gap: 30px;
+            }
+
+            .brand-info, .timing-info {
+                text-align: center;
+            }
+
+            .restaurant-name {
+                font-size: 2rem;
+            }
+
+            .nav-links {
+                display: none; /* Hide top nav on very small screens to save space, or keep if preferred */
+            }
+            
+            /* Alternative: Keep nav but stack it */
+            .nav-links {
+                display: flex;
+                gap: 10px;
+            }
+
+            .item-name {
+                font-size: 1.1rem;
+            }
+        }
+        
+        /* Smooth scrolling for anchor links */
+        html {
+            scroll-behavior: smooth;
+        }
+        
+        footer {
+            text-align: center;
+            font-size: 0.75rem;
+            color: var(--text-light);
+            margin-top: 50px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border-light);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        
+        <header>
+            <div class="header-grid">
+                <div class="brand-info">
+                    <h1 class="restaurant-name">The Saffron Conservatory</h1>
+                    <div class="address-details">
+                        <p>12, Cuffe Parade, Seaface Road</p>
+                        <p>Mumbai, Maharashtra, India</p>
+                        <p>+91 22 4567 8900</p>
+                    </div>
+                </div>
+
+                <div class="center-info">
+                    <div class="hours-display">
+                        Open Daily: 12:00 PM - 11:30 PM
+                    </div>
+                    <nav class="nav-links">
+                        <a href="#starters">Starters</a>
+                        <a href="#main-plates">Main Plates</a>
+                        <a href="#salads">Salads</a>
+                        <a href="#pasta">Pasta</a>
+                        <a href="#drinks">Drinks</a>
+                    </nav>
+                </div>
+
+                <div class="timing-info">
+                    <div class="timing-block">
+                        <span class="timing-label">Lunch</span>
+                        <span>12:00 PM – 3:30 PM</span>
+                    </div>
+                    <div class="timing-block">
+                        <span class="timing-label">Dinner</span>
+                        <span>7:00 PM – 11:30 PM</span>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <main>
+
+            <section id="starters" class="menu-category">
+                <div class="category-header">
+                    <h2 class="category-title">Starters</h2>
+                </div>
+                <div class="menu-items-grid">
+                    <article class="menu-item">
+                        <div class="item-details">
+                            <h3 class="item-name">Truffle Galouti Kebab</h3>
+                            <p class="item-desc">Melt-in-mouth lamb mince infused with black truffle oil, served on saffron sheermal.</p>
+                        </div>
+                        <div class="item-price">₹ 1,250</div>
+                    </article>
+                    <article class="menu-item">
+                        <div class="item-details">
+                            <h3 class="item-name">Smoked Burrata Chaat</h3>
+                            <p class="item-desc">Fresh burrata, tamarind glaze, crispy spinach, and pomegranate pearls.</p>
+                        </div>
+                        <div class="item-price">₹ 950</div>
+                    </article>
+                    <article class="menu-item">
+                        <div class="item-details">
+                            <h3 class="item-name">Himalayan Morels</h3>
+                            <p class="item-desc">Stuffed guchhi mushrooms with spiced khoya and pine nuts.</p>
+                        </div>
+                        <div class="item-price">₹ 1,400</div>
+                    </article>
+                </div>
+            </section>
+
+            <section id="main-plates" class="menu-category">
+                <div class="category-header">
+                    <h2 class="category-title">Main Plates</h2>
+                </div>
+                <div class="menu-items-grid">
+                    <article class="menu-item">
+                        <div class="item-details">
+                            <h3 class="item-name">Royal Nalli Nihari</h3>
+                            <p class="item-desc">Slow-cooked lamb shank in a rich flour-based stew, finished with rose water.</p>
+                        </div>
+                        <div class="item-price">₹ 1,800</div>
+                    </article>
+                    <article class="menu-item">
+                        <div class="item-details">
+                            <h3 class="item-name">Lobster Moilee</h3>
+                            <p class="item-desc">Cochin lobster poached in a mild coconut and turmeric curry, served with appam.</p>
+                        </div>
+                        <div class="item-price">₹ 2,400</div>
+                    </article>
+                    <article class="menu-item">
+                        <div class="item-details">
+                            <h3 class="item-name">Paneer Pasanda</h3>
+                            <p class="item-desc">Cottage cheese sandwiches stuffed with nuts, simmered in a silken tomato gravy.</p>
+                        </div>
+                        <div class="item-price">₹ 1,100</div>
+                    </article>
+                </div>
+            </section>
+
+            <section id="salads" class="menu-category">
+                <div class="category-header">
+                    <h2 class="category-title">Salads</h2>
+                </div>
+                <div class="menu-items-grid">
+                    <article class="menu-item">
+                        <div class="item-details">
+                            <h3 class="item-name">Fig & Arugula</h3>
+                            <p class="item-desc">Caramelized figs, fresh arugula, goat cheese crumble, honey mustard dressing.</p>
+                        </div>
+                        <div class="item-price">₹ 850</div>
+                    </article>
+                    <article class="menu-item">
+                        <div class="item-details">
+                            <h3 class="item-name">Quinoa & Avocado</h3>
+                            <p class="item-desc">Trio of quinoa, ripe avocado, edamame, and lemon vinaigrette.</p>
+                        </div>
+                        <div class="item-price">₹ 900</div>
+                    </article>
+                </div>
+            </section>
+
+            <section id="pasta" class="menu-category">
+                <div class="category-header">
+                    <h2 class="category-title">Pasta</h2>
+                </div>
+                <div class="menu-items-grid">
+                    <article class="menu-item">
+                        <div class="item-details">
+                            <h3 class="item-name">Saffron Tagliatelle</h3>
+                            <p class="item-desc">Hand-rolled pasta, saffron cream sauce, zucchini ribbons, and parmesan crisp.</p>
+                        </div>
+                        <div class="item-price">₹ 1,350</div>
+                    </article>
+                    <article class="menu-item">
+                        <div class="item-details">
+                            <h3 class="item-name">Ravioli Di Spinaci</h3>
+                            <p class="item-desc">Spinach and ricotta stuffed ravioli, sage butter emulsion.</p>
+                        </div>
+                        <div class="item-price">₹ 1,200</div>
+                    </article>
+                </div>
+            </section>
+
+             <section id="drinks" class="menu-category">
+                <div class="category-header">
+                    <h2 class="category-title">Drinks</h2>
+                </div>
+                <div class="menu-items-grid">
+                    <article class="menu-item">
+                        <div class="item-details">
+                            <h3 class="item-name">Mysore Martini</h3>
+                            <p class="item-desc">Vodka, espresso, hazelnut syrup, and a hint of cardamom.</p>
+                        </div>
+                        <div class="item-price">₹ 950</div>
+                    </article>
+                    <article class="menu-item">
+                        <div class="item-details">
+                            <h3 class="item-name">Sparkling Jasmine Tea</h3>
+                            <p class="item-desc">Cold brew jasmine tea, elderflower tonic, and mint.</p>
+                        </div>
+                        <div class="item-price">₹ 450</div>
+                    </article>
+                    <article class="menu-item">
+                        <div class="item-details">
+                            <h3 class="item-name">Masala Chai</h3>
+                            <p class="item-desc">Traditional Indian spiced tea served in a clay pot.</p>
+                        </div>
+                        <div class="item-price">₹ 350</div>
+                    </article>
+                </div>
+            </section>
+
+        </main>
+
+        <footer>
+            <p>&copy; 2025 The Saffron Conservatory. All taxes as applicable. Service charge discretionary.</p>
+        </footer>
+
+    </div>
+
+</body>
+</html>
