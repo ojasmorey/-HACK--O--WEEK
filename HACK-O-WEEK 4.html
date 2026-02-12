@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ByteBuilder | Ultimate Rigs</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* Adjusted colors for a "Hardware" feel */
+            --primary: #3b82f6;   /* Bright Blue (Intel/Cooling vibe) */
+            --secondary: #10b981; /* Emerald Green (Nvidia vibe) */
+            --accent: #f43f5e;    /* Red accent for gaming */
+            --dark: #0b1120;      /* Deep dark blue/black */
+            --light: #f8fafc;
+            --glass: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --card-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        body {
+            background-color: var(--dark);
+            color: var(--light);
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        /* --- Background Elements --- */
+        .bg-blob {
+            position: fixed;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, var(--primary) 0%, transparent 70%);
+            filter: blur(100px);
+            opacity: 0.12;
+            z-index: -1;
+            pointer-events: none;
+            transition: transform 0.2s ease-out; /* Smooth follow */
+        }
+
+        .blob-1 { top: -200px; right: -200px; }
+        .blob-2 { bottom: -200px; left: -200px; background: var(--secondary); }
+
+        /* --- Navigation --- */
+        nav {
+            padding: 1.5rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background: rgba(11, 17, 32, 0.85); /* Matches darker theme */
+            backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .logo {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.6rem;
+            font-weight: 700;
+            background: linear-gradient(to right, #fff, var(--primary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -1px;
+            text-transform: uppercase;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2.5rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--light);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            opacity: 0.7;
+            transition: 0.3s;
+            position: relative;
+        }
+
+        .nav-links a:hover {
+            opacity: 1;
+            color: var(--primary);
+        }
+
+        /* --- Hero Section --- */
+        .hero {
+            height: 90vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 0 5%;
+            position: relative;
+        }
+
+        .hero h1 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: clamp(3rem, 7vw, 6rem);
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(135deg, #fff 40%, var(--primary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: slideUp 1s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+
+        .hero p {
+            max-width: 650px;
+            font-size: 1.2rem;
+            opacity: 0.6;
+            margin-bottom: 3rem;
+            animation: fadeIn 1.5s ease;
+        }
+
+        .btn-glow {
+            padding: 1rem 3rem;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.4s;
+            box-shadow: 0 0 25px rgba(59, 130, 246, 0.4);
+            text-decoration: none;
+            display: inline-block;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 0.9rem;
+        }
+
+        .btn-glow:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 0 50px rgba(59, 130, 246, 0.6);
+            background: #2563eb;
+        }
+
+        /* --- Products Grid --- */
+        .section-title {
+            padding: 4rem 5% 2rem;
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 2.2rem;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            color: white;
+        }
+
+        .section-title::after {
+            content: '';
+            height: 1px;
+            flex-grow: 1;
+            background: linear-gradient(to right, var(--glass-border), transparent);
+        }
+
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 2.5rem;
+            padding: 0 5% 6rem;
+        }
+
+        .product-card {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 1.2rem;
+            transition: 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(20px);
+            opacity: 0; /* Hidden initially for animation */
+            transform: translateY(40px);
+        }
+
+        .product-card.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .product-card:hover {
+            transform: translateY(-12px);
+            border-color: var(--primary);
+            box-shadow: var(--card-shadow);
+        }
+
+        .image-container {
+            width: 100%;
+            height: 240px;
+            background: rgba(0,0,0,0.2);
+            border-radius: 12px;
+            margin-bottom: 1.5rem;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .image-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: 0.8s cubic-bezier(0.2, 0, 0.2, 1);
+        }
+
+        .product-card:hover .image-container img {
+            transform: scale(1.1);
+        }
+
+        .badge {
+            position: absolute;
+            top: 1.8rem;
+            left: 1.8rem;
+            background: var(--accent);
+            color: white;
+            padding: 0.35rem 0.8rem;
+            border-radius: 6px;
+            font-size: 0.65rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            z-index: 2;
+            box-shadow: 0 4px 12px rgba(244, 63, 94, 0.4);
+        }
+
+        .product-info {
+            padding: 0.2rem;
+        }
+
+        .product-category {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            color: var(--primary);
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            letter-spacing: 1px;
+            display: block;
+        }
+
+        .product-info h3 {
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+            color: #fff;
+            font-weight: 600;
+        }
+
+        .rating {
+            color: #fbbf24;
+            font-size: 0.8rem;
+            margin-bottom: 1rem;
+            letter-spacing: 2px;
+        }
+
+        .card-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--glass-border);
+        }
+
+        .price {
+            font-size: 1.3rem;
+            font-weight: 800;
+            color: #fff;
+        }
+
+        .buy-btn {
+            width: 40px;
+            height: 40px;
+            background: var(--light);
+            color: var(--dark);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            transition: 0.3s;
+            box-shadow: 0 4px 15px rgba(255, 255, 255, 0.1);
+        }
+
+        .buy-btn:hover {
+            background: var(--primary);
+            color: white;
+            transform: rotate(90deg);
+        }
+
+        /* --- Footer --- */
+        footer {
+            padding: 4rem 5%;
+            border-top: 1px solid var(--glass-border);
+            text-align: center;
+            background: rgba(0,0,0,0.2);
+        }
+
+        .footer-logo {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            display: block;
+            color: white;
+        }
+
+        .copyright {
+            font-size: 0.8rem;
+            opacity: 0.3;
+        }
+
+        /* --- Animations --- */
+        @keyframes slideUp {
+            from { transform: translateY(50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-links { display: none; }
+            .hero h1 { font-size: 3rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="bg-blob blob-1"></div>
+    <div class="bg-blob blob-2"></div>
+
+    <nav>
+        <div class="logo">BYTEBUILDER</div>
+        <ul class="nav-links">
+            <li><a href="#">Components</a></li>
+            <li><a href="#">Pre-Builts</a></li>
+            <li><a href="#">Peripherals</a></li>
+            <li><a href="#">Builder</a></li>
+        </ul>
+        <div style="color: white; cursor: pointer; opacity: 0.8;">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+        </div>
+    </nav>
+
+    <header class="hero">
+        <h1>FORGE YOUR LEGACY.</h1>
+        <p>Elite components for the ultimate battle station. Experience next-gen performance with ByteBuilder's curated hardware selection.</p>
+        <a href="#shop" class="btn-glow">Start Building</a>
+    </header>
+
+    <section id="shop">
+        <h2 class="section-title">Enthusiast Grade</h2>
+        <div class="products-grid" id="productGrid">
+            </div>
+    </section>
+
+    <footer>
+        <span class="footer-logo">BYTEBUILDER</span>
+        <p class="copyright">© 2026 ByteBuilder Systems. All Rights Reserved.</p>
+    </footer>
+
+    <script>
+        // PC Parts Data
+        const products = [
+            {
+                name: "GeForce RTX 4070",
+                category: "Graphics",
+                price: "$599.99",
+                tag: "Best Seller",
+                rating: 5,
+                img: "https://images.unsplash.com/photo-1591488320449-011701bb6704?auto=format&fit=crop&w=600&q=80"
+            },
+            {
+                name: "Intel Core i9-13900K",
+                category: "Processor",
+                price: "$549.00",
+                tag: "Flagship",
+                rating: 5,
+                img: "https://images.unsplash.com/photo-1555618568-9d4432c2c019?auto=format&fit=crop&w=600&q=80"
+            },
+            {
+                name: "MSI MPG Z790 Edge",
+                category: "Motherboard",
+                price: "$309.99",
+                tag: "WiFi 6E",
+                rating: 4,
+                img: "https://images.unsplash.com/photo-1678709328221-72c84236a26d?auto=format&fit=crop&w=600&q=80"
+            },
+            {
+                name: "Corsair RGB 32GB",
+                category: "Memory",
+                price: "$115.00",
+                tag: "DDR5",
+                rating: 5,
+                img: "https://images.unsplash.com/photo-1562976540-1502c2145186?auto=format&fit=crop&w=600&q=80"
+            },
+            {
+                name: "Samsung 990 PRO 2TB",
+                category: "Storage",
+                price: "$169.50",
+                tag: "Fastest",
+                rating: 5,
+                img: "https://images.unsplash.com/photo-1599395052994-44b4e7a858e6?auto=format&fit=crop&w=600&q=80"
+            },
+            {
+                name: "NZXT H9 Flow",
+                category: "Chassis",
+                price: "$159.00",
+                tag: "New",
+                rating: 4,
+                img: "https://images.unsplash.com/photo-1587202372634-32705e3bf49c?auto=format&fit=crop&w=600&q=80"
+            },
+            {
+                name: "Kraken 360 RGB",
+                category: "Cooling",
+                price: "$219.99",
+                tag: "LCD Screen",
+                rating: 5,
+                img: "https://images.unsplash.com/photo-1587202372162-43831777265e?auto=format&fit=crop&w=600&q=80"
+            },
+            {
+                name: "EVGA SuperNOVA 850W",
+                category: "Power",
+                price: "$139.99",
+                tag: "Gold Rated",
+                rating: 5,
+                img: "https://images.unsplash.com/photo-1587202372583-49330a15584d?auto=format&fit=crop&w=600&q=80"
+            }
+        ];
+
+        const grid = document.getElementById('productGrid');
+
+        // Render Cards
+        products.forEach((p, index) => {
+            const card = document.createElement('div');
+            card.className = 'product-card';
+            // Staggered animation delay
+            card.style.transitionDelay = `${index * 0.1}s`;
+            
+            card.innerHTML = `
+                ${p.tag ? `<div class="badge">${p.tag}</div>` : ''}
+                <div class="image-container">
+                    <img src="${p.img}" alt="${p.name}" loading="lazy">
+                </div>
+                <div class="product-info">
+                    <span class="product-category">${p.category}</span>
+                    <h3>${p.name}</h3>
+                    <div class="rating">
+                        ${'★'.repeat(p.rating)}${'☆'.repeat(5 - p.rating)}
+                    </div>
+                    <div class="card-footer">
+                        <span class="price">${p.price}</span>
+                        <a href="#" class="buy-btn" title="Add to Cart">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                        </a>
+                    </div>
+                </div>
+            `;
+            grid.appendChild(card);
+        });
+
+        // Scroll Observer (Fade in effect)
+        const observerOptions = { threshold: 0.1, rootMargin: "0px 0px -50px 0px" };
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    observer.unobserve(entry.target); // Only animate once
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.product-card').forEach(card => observer.observe(card));
+
+        // Smooth Scroll for Hero Button
+        document.querySelector('.btn-glow').addEventListener('click', function(e) {
+            e.preventDefault();
+            document.querySelector('#shop').scrollIntoView({ behavior: 'smooth' });
+        });
+
+        // Mouse Move Parallax Effect for Background Blobs
+        window.addEventListener('mousemove', (e) => {
+            const x = (e.clientX / window.innerWidth) - 0.5;
+            const y = (e.clientY / window.innerHeight) - 0.5;
+            
+            // Move blobs in opposite directions
+            const blob1 = document.querySelector('.blob-1');
+            const blob2 = document.querySelector('.blob-2');
+            
+            if(blob1 && blob2) {
+                blob1.style.transform = `translate(${x * 60}px, ${y * 60}px)`;
+                blob2.style.transform = `translate(${-x * 60}px, ${-y * 60}px)`;
+            }
+        });
+    </script>
+</body>
+</html>
