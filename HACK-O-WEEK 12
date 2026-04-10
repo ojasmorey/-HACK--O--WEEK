@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bharat Tech | Linked List Bill System</title>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --secondary: #f59e0b;
+            --dark: #0f172a;
+            --bg: #f8fafc;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--bg);
+            margin: 0;
+            padding: 40px 20px;
+            color: var(--dark);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .main-layout {
+            display: grid;
+            grid-template-columns: 1fr 380px;
+            gap: 30px;
+        }
+
+        /* Product Grid */
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 20px;
+        }
+
+        .card {
+            background: white;
+            padding: 20px;
+            border-radius: 16px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            border: 1px solid #e2e8f0;
+            transition: 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-8px);
+            border-color: var(--primary);
+        }
+
+        .card h3 { font-size: 1.1rem; margin: 10px 0; }
+        .price { font-size: 1.2rem; font-weight: 800; color: var(--primary); display: block; margin-bottom: 15px; }
+
+        /* Sidebar Cart */
+        .bill-panel {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            height: fit-content;
+            position: sticky;
+            top: 20px;
+        }
+
+        .bill-list {
+            list-style: none;
+            padding: 0;
+            margin: 20px 0;
+            max-height: 450px;
+            overflow-y: auto;
+        }
+
+        .bill-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #f1f5f9;
+            font-size: 0.95rem;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .btn-add { background: var(--primary); color: white; width: 100%; }
+        .btn-add:hover { background: #1d4ed8; }
+
+        .btn-remove {
+            background: #fff1f2;
+            color: #ef4444;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 0.75rem;
+        }
+
+        .btn-remove:hover { background: #ef4444; color: white; }
+
+        .total-section {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 2px solid var(--dark);
+            display: flex;
+            justify-content: space-between;
+            font-size: 1.4rem;
+            font-weight: 800;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 900px) {
+            .main-layout { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <h1>TechMart India</h1>
+            <p>Select items to add to your dynamic bill</p>
+        </header>
+
+        <div class="main-layout">
+            <div class="product-grid" id="productShelf">
+                </div>
+
+            <div class="bill-panel">
+                <h2 style="margin-top:0">Tax Invoice</h2>
+                <ul id="cartDisplay" class="bill-list">
+                    <p style="text-align:center; color:#94a3b8;">Your cart is empty</p>
+                </ul>
+                <div class="total-section">
+                    <span>Total:</span>
+                    <span id="finalBill">₹0</span>
+                </div>
+                <button class="btn btn-add" style="margin-top:20px; background:var(--secondary)" onclick="window.print()">Print Bill</button>
+            </div>
+        </div>
+    </div>
+
+<script>
+    // Data: Static items available for purchase
+    const products = [
+        { name: "Wireless Earbuds", price: 2499 },
+        { name: "Mechanical Keyboard", price: 4500 },
+        { name: "Logitech Mouse", price: 1200 },
+        { name: "1TB External SSD", price: 8900 },
+        { name: "Laptop Stand", price: 999 },
+        { name: "Webcam 1080p", price: 3200 },
+        { name: "USB-C Fast Charger", price: 1500 },
+        { name: "Gaming Headset", price: 5400 }
+    ];
+
+    // Linked List Logic
+    class Node {
+        constructor(name, price) {
+            this.id = Math.random().toString(36).substr(2, 9);
+            this.name = name;
+            this.price = price;
+            this.next = null;
+        }
+    }
+
+    class LinkedBill {
+        constructor() {
+            this.head = null;
+        }
+
+        // Insert at Tail (Bottom of the bill)
+        addItem(name, price) {
+            const newNode = new Node(name, price);
+            if (!this.head) {
+                this.head = newNode;
+            } else {
+                let current = this.head;
+                while (current.next) {
+                    current = current.next;
+                }
+                current.next = newNode;
+            }
+            this.render();
+        }
+
+        // Remove by ID
+        removeItem(id) {
+            if (!this.head) return;
+            if (this.head.id === id) {
+                this.head = this.head.next;
+            } else {
+                let current = this.head;
+                while (current.next && current.next.id !== id) {
+                    current = current.next;
+                }
+                if (current.next) {
+                    current.next = current.next.next;
+                }
+            }
+            this.render();
+        }
+
+        render() {
+            const listUI = document.getElementById('cartDisplay');
+            const totalUI = document.getElementById('finalBill');
+            listUI.innerHTML = '';
+            
+            let current = this.head;
+            let sum = 0;
+
+            if (!current) {
+                listUI.innerHTML = '<p style="text-align:center; color:#94a3b8; padding:20px;">Your cart is empty</p>';
+            }
+
+            while (current) {
+                const li = document.createElement('li');
+                li.className = 'bill-item';
+                li.innerHTML = `
+                    <span>${current.name}</span>
+                    <div>
+                        <span style="font-weight:700; margin-right:10px">₹${current.price}</span>
+                        <button class="btn-remove" onclick="bill.removeItem('${current.id}')">Remove</button>
+                    </div>
+                `;
+                listUI.appendChild(li);
+                sum += current.price;
+                current = current.next;
+            }
+            totalUI.innerText = `₹${sum.toLocaleString('en-IN')}`;
+        }
+    }
+
+    // Initialize Bill
+    const bill = new LinkedBill();
+
+    // Populate Product Shelf
+    const shelf = document.getElementById('productShelf');
+    products.forEach(p => {
+        const div = document.createElement('div');
+        div.className = 'card';
+        div.innerHTML = `
+            <h3>${p.name}</h3>
+            <span class="price">₹${p.price.toLocaleString('en-IN')}</span>
+            <button class="btn btn-add" onclick="bill.addItem('${p.name}', ${p.price})">Add to Bill</button>
+        `;
+        shelf.appendChild(div);
+    });
+</script>
+
+</body>
+</html>
