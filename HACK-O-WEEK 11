@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nexus Library | Premium Catalogue</title>
+    <style>
+        :root {
+            --glass: rgba(255, 255, 255, 0.8);
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --accent: #f472b6;
+            --text: #0f172a;
+            --danger: #ff4757;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 900px;
+            background: var(--glass);
+            backdrop-filter: blur(10px);
+            border-radius: 24px;
+            padding: 40px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        header { text-align: center; margin-bottom: 30px; }
+        header h1 { color: var(--text); font-size: 2.5rem; letter-spacing: -1px; }
+        
+        /* Capacity Indicator */
+        .cap-wrapper { margin: 15px 0; }
+        .cap-text { display: flex; justify-content: space-between; font-weight: 600; font-size: 0.9rem; margin-bottom: 8px; }
+        .progress-bg { background: rgba(0,0,0,0.1); height: 8px; border-radius: 10px; overflow: hidden; }
+        #progress { 
+            height: 100%; background: linear-gradient(90deg, var(--primary), var(--accent)); 
+            width: 0%; transition: width 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+        }
+
+        /* Form Layout */
+        .dashboard-controls {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        input {
+            padding: 14px 20px;
+            border: 2px solid transparent;
+            border-radius: 12px;
+            background: white;
+            font-size: 1rem;
+            transition: all 0.3s;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+
+        input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1); }
+
+        .btn-add {
+            background: var(--primary);
+            color: white;
+            padding: 0 30px;
+            border-radius: 12px;
+            border: none;
+            font-weight: 700;
+            cursor: pointer;
+            transition: transform 0.2s, background 0.2s;
+        }
+
+        .btn-add:hover { background: var(--primary-dark); transform: translateY(-2px); }
+
+        /* Book Grid */
+        .book-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .book-card {
+            background: white;
+            padding: 20px;
+            border-radius: 16px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: all 0.3s;
+            border: 1px solid #f1f5f9;
+            animation: slideUp 0.4s ease-out;
+        }
+
+        .book-card:hover { transform: translateY(-5px); box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); }
+
+        .book-title { font-weight: 700; color: var(--text); font-size: 1.1rem; margin-bottom: 15px; }
+
+        .btn-remove {
+            background: #fff1f2;
+            color: var(--danger);
+            border: none;
+            padding: 8px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-remove:hover { background: var(--danger); color: white; }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 600px) {
+            .dashboard-controls { grid-template-columns: 1fr; }
+            .container { padding: 20px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <h1>Nexus Library</h1>
+            <div class="cap-wrapper">
+                <div class="cap-text">
+                    <span>Collection Growth</span>
+                    <span id="stat-label">0 / 15 Books</span>
+                </div>
+                <div class="progress-bg"><div id="progress"></div></div>
+            </div>
+        </header>
+
+        <div class="dashboard-controls">
+            <input type="text" id="newBookTitle" placeholder="Add a new masterpiece...">
+            <button class="btn-add" onclick="addBook()">Add Book</button>
+        </div>
+
+        <input type="text" id="searchBar" style="width: 100%; margin-bottom: 20px;" 
+               placeholder="Search collection..." oninput="updateDisplay()">
+
+        <div id="bookGrid" class="book-grid">
+            </div>
+    </div>
+
+    <script>
+        // Data management
+        const LIMIT = 15;
+        let library = [
+            "The Midnight Library",
+            "Atomic Habits",
+            "Dune: Part One",
+            "Project Hail Mary",
+            "The Silent Patient",
+            "The Psychology of Money",
+            "Circe",
+            "Deep Work",
+            "The Seven Husbands of Evelyn Hugo"
+        ];
+
+        function updateDisplay() {
+            const grid = document.getElementById('bookGrid');
+            const search = document.getElementById('searchBar').value.toLowerCase();
+            const filtered = library.filter(b => b.toLowerCase().includes(search));
+            
+            // Update Progress & UI Stats
+            const percentage = (library.length / LIMIT) * 100;
+            document.getElementById('progress').style.width = percentage + "%";
+            document.getElementById('stat-label').innerText = `${library.length} / ${LIMIT} Books`;
+
+            grid.innerHTML = "";
+
+            if (filtered.length === 0) {
+                grid.innerHTML = `<p style="grid-column: 1/-1; text-align: center; color: #64748b; padding: 40px;">No books matching your search.</p>`;
+                return;
+            }
+
+            filtered.forEach(title => {
+                const card = document.createElement('div');
+                card.className = 'book-card';
+                card.innerHTML = `
+                    <div class="book-title">${title}</div>
+                    <button class="btn-remove" onclick="removeBook('${title.replace(/'/g, "\\'")}')">Remove</button>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function addBook() {
+            const input = document.getElementById('newBookTitle');
+            const title = input.value.trim();
+
+            if (!title) return;
+            if (library.length >= LIMIT) {
+                alert("Collection is at maximum capacity (15)!");
+                return;
+            }
+            if (library.some(b => b.toLowerCase() === title.toLowerCase())) {
+                alert("This book is already in your library.");
+                return;
+            }
+
+            library.push(title);
+            input.value = "";
+            updateDisplay();
+        }
+
+        function removeBook(title) {
+            library = library.filter(b => b !== title);
+            updateDisplay();
+        }
+
+        // Initial launch
+        updateDisplay();
+    </script>
+</body>
+</html>
